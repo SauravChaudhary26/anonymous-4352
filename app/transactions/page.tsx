@@ -24,6 +24,7 @@ type Transaction = {
 };
 
 export default function TransactionsPage() {
+   //All the useStates
    const [transactions, setTransactions] = useState<Transaction[]>([]);
    const [form, setForm] = useState<Transaction>({
       amount: 0,
@@ -32,7 +33,6 @@ export default function TransactionsPage() {
       category: "",
    });
    const [error, setError] = useState("");
-
    // States for editing functionality
    const [editingTransactionId, setEditingTransactionId] = useState<
       string | null
@@ -57,6 +57,18 @@ export default function TransactionsPage() {
       };
       fetchData();
    }, []);
+
+   // Start Editing: set the transaction to edit in state
+   const handleEditClick = (transaction: Transaction) => {
+      setEditingTransactionId(transaction._id || null);
+      setEditForm(transaction);
+   };
+
+   // Cancel Editing
+   const handleCancelEdit = () => {
+      setEditingTransactionId(null);
+      setEditForm({ amount: 0, date: "", description: "", category: "" });
+   };
 
    // Add Transaction (POST)
    const handleSubmit = async (e: React.FormEvent) => {
@@ -104,25 +116,16 @@ export default function TransactionsPage() {
    const handleDelete = async (id: string) => {
       try {
          console.log(id);
-         await fetch(`/api/transactions/${id}`, {
-            method: "DELETE",
+         const tempData = { id: id };
+         await fetch(`/api/transactions/deleteRoute`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(tempData),
          });
          setTransactions((prev) => prev.filter((t) => t._id !== id));
       } catch (error) {
          console.error(error);
       }
-   };
-
-   // Start Editing: set the transaction to edit in state
-   const handleEditClick = (transaction: Transaction) => {
-      setEditingTransactionId(transaction._id || null);
-      setEditForm(transaction);
-   };
-
-   // Cancel Editing
-   const handleCancelEdit = () => {
-      setEditingTransactionId(null);
-      setEditForm({ amount: 0, date: "", description: "", category: "" });
    };
 
    // Update Transaction (PUT)
@@ -187,9 +190,16 @@ export default function TransactionsPage() {
                   <Input
                      id="amount"
                      type="number"
-                     value={form.amount}
+                     placeholder="e.g., 500"
+                     value={form.amount === 0 ? "" : form.amount}
                      onChange={(e) =>
-                        setForm({ ...form, amount: Number(e.target.value) })
+                        setForm({
+                           ...form,
+                           amount:
+                              e.target.value === ""
+                                 ? 0
+                                 : Number(e.target.value),
+                        })
                      }
                      className="bg-gray-900"
                   />

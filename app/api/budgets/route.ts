@@ -1,21 +1,32 @@
-// app/api/budgets/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
    try {
       const client = await clientPromise;
       const db = client.db("personal_finance");
       const budgets = await db.collection("budgets").find().toArray();
       return NextResponse.json(budgets);
-   } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+   } catch (error: unknown) {
+      let errorMessage = "An unknown error occurred";
+      if (error instanceof Error) {
+         errorMessage = error.message;
+      }
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
    }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
    try {
       const { category, month, budget } = await req.json();
+
+      if (!category || !month || budget === undefined) {
+         return NextResponse.json(
+            { message: "Missing required fields" },
+            { status: 400 }
+         );
+      }
+
       const client = await clientPromise;
       const db = client.db("personal_finance");
 
@@ -26,7 +37,11 @@ export async function POST(req: NextRequest) {
       });
 
       return NextResponse.json(result);
-   } catch (error: any) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+   } catch (error: unknown) {
+      let errorMessage = "An unknown error occurred";
+      if (error instanceof Error) {
+         errorMessage = error.message;
+      }
+      return NextResponse.json({ error: errorMessage }, { status: 500 });
    }
 }
