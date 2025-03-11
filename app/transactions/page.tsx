@@ -77,7 +77,8 @@ export default function TransactionsPage() {
    // Delete Transaction (DELETE)
    const handleDelete = async (id: string) => {
       try {
-         await fetch(`/api/transactions?id=${id}`, {
+         console.log(id);
+         await fetch(`/api/transactions/${id}`, {
             method: "DELETE",
          });
          setTransactions((prev) => prev.filter((t) => t._id !== id));
@@ -102,7 +103,7 @@ export default function TransactionsPage() {
    const handleUpdate = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-         const res = await fetch("/api/transactions", {
+         const res = await fetch(`/api/transactions/`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(editForm),
