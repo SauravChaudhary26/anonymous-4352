@@ -48,7 +48,6 @@ export async function PUT(req: NextRequest) {
          },
          { returnDocument: "after" }
       );
-      console.log(result);
       return NextResponse.json(result);
    } catch (error: any) {
       console.log(error);

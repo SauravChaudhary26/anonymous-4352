@@ -6,6 +6,7 @@ import Link from "next/link";
 
 //Shadcn theme for dark mode
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 // shadcn navigation menu components
 import {
@@ -71,6 +72,7 @@ export default function RootLayout({
 
                <main className="container mx-auto p-4">{children}</main>
             </ThemeProvider>
+            <Toaster richColors />
          </body>
       </html>
    );

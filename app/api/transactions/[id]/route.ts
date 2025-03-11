@@ -7,7 +7,7 @@ export async function DELETE(
    request: NextRequest,
    { params }: { params: { id: string } }
 ): Promise<NextResponse> {
-   const { id } = params;
+   const { id } = await params;
    try {
       const client = await clientPromise;
       const db = client.db("personal_finance");

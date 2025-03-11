@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 
 import { predefinedCategories } from "@/lib/constants";
+import { toast } from "sonner";
 
 type Transaction = {
    _id?: string;
@@ -45,10 +46,16 @@ export default function TransactionsPage() {
 
    // Fetch transactions on mount
    useEffect(() => {
-      fetch("/api/transactions")
-         .then((res) => res.json())
-         .then((data) => setTransactions(data))
-         .catch((err) => console.error(err));
+      const fetchData = async () => {
+         await fetch("/api/transactions")
+            .then((res) => res.json())
+            .then((data) => {
+               setTransactions(data);
+               console.log(data);
+            })
+            .catch((err) => console.error(err));
+      };
+      fetchData();
    }, []);
 
    // Add Transaction (POST)
@@ -58,6 +65,24 @@ export default function TransactionsPage() {
          setError("Please fill in all fields.");
          return;
       }
+      console.log(form.amount);
+      if (form.amount < 0) {
+         setError("Amount cannot be negative.");
+         return;
+      }
+
+      // Validate: Date should not be in the future
+      const inputDate = new Date(form.date);
+      const today = new Date();
+      // Zero-out the time to compare only dates
+      today.setHours(0, 0, 0, 0);
+      inputDate.setHours(0, 0, 0, 0);
+
+      if (inputDate > today) {
+         setError("Date cannot be in the future.");
+         return;
+      }
+
       setError("");
       try {
          const res = await fetch("/api/transactions", {
@@ -68,6 +93,7 @@ export default function TransactionsPage() {
          const newTransaction = await res.json();
          setTransactions([...transactions, newTransaction.ops?.[0] ?? form]);
          // Reset form
+         toast.success("Transaction added succesfully");
          setForm({ amount: 0, date: "", description: "", category: "" });
       } catch (error) {
          console.error(error);
@@ -102,6 +128,27 @@ export default function TransactionsPage() {
    // Update Transaction (PUT)
    const handleUpdate = async (e: React.FormEvent) => {
       e.preventDefault();
+
+      //Preventing zero or negative amount input
+      if (editForm.amount <= 0) {
+         toast.error("Amount should be greater than 0");
+         return;
+      }
+
+      // Validate: Date should not be in the future
+      const inputDate = new Date(form.date);
+      const today = new Date();
+      // Zero-out the time to compare only dates
+      today.setHours(0, 0, 0, 0);
+      inputDate.setHours(0, 0, 0, 0);
+
+      if (inputDate > today) {
+         toast.error("Date cannot be in the future.");
+         return;
+      }
+
+      setError("");
+
       try {
          const res = await fetch(`/api/transactions/`, {
             method: "PUT",
@@ -123,7 +170,7 @@ export default function TransactionsPage() {
    };
 
    return (
-      <Card className="bg-black border border-gray-800 text-white">
+      <Card className="bg-black border border-gray-800 text-white max-w-[1200px]">
          <CardHeader>
             <CardTitle className="text-2xl">Transactions</CardTitle>
             <CardDescription>

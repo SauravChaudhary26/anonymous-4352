@@ -50,11 +50,17 @@ export default function DashboardPage() {
 
    // 3. Monthly expense data for a bar chart
    //    Group by YYYY-MM
+   const formatDate = (date: string) => {
+      const d = new Date(date);
+      return `${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`; // MM-YYYY format
+   };
+
    const monthlyMap: Record<string, number> = {};
    transactions.forEach((t) => {
-      const month = t.date.slice(0, 7); // e.g. "2025-03"
+      const month = formatDate(t.date); // Format date correctly
       monthlyMap[month] = (monthlyMap[month] || 0) + Number(t.amount);
    });
+
    const monthlyData = Object.entries(monthlyMap).map(([month, expense]) => ({
       month,
       expense,
@@ -138,8 +144,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
                <ul className="space-y-1">
-                  {recentTransactions.map((t) => (
-                     <li key={t._id}>
+                  {recentTransactions.map((t, index) => (
+                     <li key={t._id || index}>
                         {t.date} – ${t.amount} – {t.description}{" "}
                         {t.category && `[${t.category}]`}
                      </li>
