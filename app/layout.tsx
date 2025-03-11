@@ -2,17 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
-
-// Shadcn theme for dark mode
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-
-// shadcn navigation menu components
-import {
-   NavigationMenu,
-   NavigationMenuList,
-   NavigationMenuItem,
-} from "@/components/ui/navigation-menu";
+import Navbar from "@/components/Navbar"; // Move the client-side logic to Navbar.tsx
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,39 +28,7 @@ export default function RootLayout({
                defaultTheme="dark"
                enableSystem={false}
             >
-               <header className="border-b border-gray-800">
-                  <nav className="container mx-auto flex items-center justify-center h-20">
-                     <NavigationMenu>
-                        <NavigationMenuList className="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8">
-                           <NavigationMenuItem>
-                              <Link
-                                 href="/dashboard"
-                                 className="px-4 py-2 hover:underline"
-                              >
-                                 Dashboard
-                              </Link>
-                           </NavigationMenuItem>
-                           <NavigationMenuItem>
-                              <Link
-                                 href="/transactions"
-                                 className="px-4 py-2 hover:underline"
-                              >
-                                 Transactions
-                              </Link>
-                           </NavigationMenuItem>
-                           <NavigationMenuItem>
-                              <Link
-                                 href="/budgeting"
-                                 className="px-4 py-2 hover:underline"
-                              >
-                                 Budgeting
-                              </Link>
-                           </NavigationMenuItem>
-                        </NavigationMenuList>
-                     </NavigationMenu>
-                  </nav>
-               </header>
-
+               <Navbar />
                <main className="container mx-auto p-4">{children}</main>
             </ThemeProvider>
             <Toaster richColors />
