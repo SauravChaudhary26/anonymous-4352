@@ -1,10 +1,9 @@
-// app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 
-//Shadcn theme for dark mode
+// Shadcn theme for dark mode
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -38,9 +37,9 @@ export default function RootLayout({
                enableSystem={false}
             >
                <header className="border-b border-gray-800">
-                  <nav className="container mx-auto p-4">
+                  <nav className="container mx-auto flex items-center justify-center h-20">
                      <NavigationMenu>
-                        <NavigationMenuList>
+                        <NavigationMenuList className="flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8">
                            <NavigationMenuItem>
                               <Link
                                  href="/dashboard"
