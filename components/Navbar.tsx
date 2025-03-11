@@ -16,7 +16,7 @@ const Navbar = () => {
 
    // Simulate initial loading screen
    useEffect(() => {
-      const timer = setTimeout(() => setLoading(false), 1000);
+      const timer = setTimeout(() => setLoading(false), 3000);
       return () => clearTimeout(timer);
    }, []);
 
